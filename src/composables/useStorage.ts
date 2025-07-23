@@ -1,17 +1,38 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { AppData } from '@/models'
 
 const STORAGE_KEY = 'todo_app_data'
 
-export function useLocalStorage() {
-	const data = ref<AppData>()
+const data = ref<AppData>({
+	projects: [],
+	filters: {
+		statuses: [],
+		tags: [],
+		search: ''
+	}
+})
 
-	const saveData = () => {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(data.value))
+let isInitialized = false
+
+export function useLocalStorage() {
+	if (!isInitialized) {
+		const raw = localStorage.getItem(STORAGE_KEY)
+		if (raw) {
+			try {
+				data.value = JSON.parse(raw)
+			} catch {
+				console.warn('Invalid localStorage format')
+			}
+		}
+
+		watch(data, () => {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(data.value))
+		}, { deep: true })
+
+		isInitialized = true
 	}
 
 	return {
-		data,
-		saveData
+		data
 	}
 }

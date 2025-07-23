@@ -3,6 +3,11 @@ import { Card } from '@/components/ui/card'
 import FilterPanel from '@/components/widgets/filter-panel.vue'
 import TaskForm from '@/components/widgets/task-form.vue'
 import TaskItem from '@/components/widgets/task-item.vue'
+import { useLocalStorage } from '@/composables/useStorage.ts'
+import { computed } from 'vue'
+
+const { data } = useLocalStorage()
+const projects = computed(() => data.value.projects)
 </script>
 
 <template>
