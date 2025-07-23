@@ -27,7 +27,7 @@ const sizeClass = computed(() =>
 			v-if="removable"
 			type="button"
 			@click="emit('remove')"
-			class="ml-1 text-red-600 hover:text-red-800 leading-none text-sm"
+			class="ml-1 cursor-pointer text-red-600 hover:text-red-800 leading-none text-sm"
 		>
 			×
 		</button>

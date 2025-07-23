@@ -3,18 +3,28 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Tag } from '@/components/ui/tag'
 import { Select } from '@/components/ui/select'
+import { useTaskForm } from '@/composables/useTaskForm'
+
+const { form, addTag, removeTag, addTask } = useTaskForm()
 </script>
 
 <template>
 	<form class="space-y-4" @submit.prevent>
 		<!-- Заголовок -->
 		<div>
-			<Input name="title" placeholder="Название задачи" label="Задача" required />
+			<Input
+				v-model="form.data.name"
+				name="title"
+				placeholder="Название задачи"
+				label="Задача"
+				required
+			/>
 		</div>
 
 		<!-- Статус -->
 		<div>
 			<Select
+				v-model="form.data.status"
 				name="status"
 				:options="[
 					{ label: 'В работе', value: 'in-progress' },
@@ -29,17 +39,31 @@ import { Select } from '@/components/ui/select'
 
 		<!-- Теги -->
 		<div>
-			<Input name="tags" placeholder="Добавить тег и нажать Enter" label="Теги" />
+			<Input
+				v-model="form.tag"
+				name="tags"
+				placeholder="Добавить тег и нажать Enter"
+				label="Теги"
+				@keydown.enter.prevent="addTag"
+			/>
 
 			<div class="flex flex-wrap gap-2 mt-2">
-				<Tag label="Test 1" size="md" removable />
-				<Tag label="Test 1" size="md" removable />
+				<Tag
+					v-for="(tag, index) in form.data.tags"
+					:key="index"
+					:label="tag"
+					size="md"
+					removable
+					@remove="removeTag(index)"
+				/>
 			</div>
 		</div>
 
 		<!-- Кнопка -->
 		<div>
-			<Button type="submit" variant="primary"> Добавить задачу </Button>
+			<Button @click.prevent="addTask" type="submit" variant="primary">
+				Добавить задачу
+			</Button>
 		</div>
 	</form>
 </template>

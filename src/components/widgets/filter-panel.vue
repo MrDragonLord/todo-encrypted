@@ -1,9 +1,32 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { ref } from 'vue'
+import { Button } from '@/components/ui/button'
+import { useLocalStorage } from '@/composables/useStorage'
+import { computed } from 'vue'
+import type { Task } from '@/models'
 
-const check = ref(false)
+const { data } = useLocalStorage()
+
+const filters = computed(() => data.value.filters)
+
+const statusesList = [
+	{ label: 'ToDo', value: 'todo' },
+	{ label: 'В работе', value: 'in-progress' },
+	{ label: 'Готово', value: 'done' }
+]
+
+function collectTags(task: Task, tagSet: Set<string>) {
+	task.tags.forEach(tag => tagSet.add(tag))
+	task.subtasks.forEach(sub => collectTags(sub, tagSet))
+}
+
+const allTags = computed(() => {
+	const tags = new Set<string>()
+	data.value.projects.forEach(p => {
+		p.tasks.forEach(t => collectTags(t, tags))
+	})
+	return Array.from(tags)
+})
 </script>
 
 <template>
@@ -13,29 +36,38 @@ const check = ref(false)
 			<label class="block text-sm font-medium text-gray-700 mb-1">Статусы задач</label>
 			<div class="flex flex-wrap gap-3">
 				<Checkbox
-					v-model="check"
-					name="status-inprogress"
-					id="status-inprogress"
-					label="В работе"
+					v-for="status in statusesList"
+					:key="status.value"
+					:label="status.label"
+					:value="status.value"
+					v-model="filters.statuses"
 				/>
 			</div>
 		</div>
 
 		<!-- Теги -->
-		<label class="block text-sm font-medium text-gray-700 mb-1">Теги</label>
-		<div class="flex flex-wrap gap-3">
-			<Checkbox
-				v-for="n in 3"
-				:key="n"
-				:name="`tag-${n}`"
-				:id="`tag-${n}`"
-				:label="`Test ${n}`"
-			/>
+		<div>
+			<label class="block text-sm font-medium text-gray-700 mb-1">Теги</label>
+			<div class="flex flex-wrap gap-3">
+				<Checkbox
+					v-for="tag in allTags"
+					:key="tag"
+					:label="tag"
+					:value="tag"
+					v-model="filters.tags"
+				/>
+			</div>
 		</div>
 
 		<!-- Сброс -->
 		<div>
-			<Button type="button" variant="outline" className="text-sm"> Сбросить фильтры </Button>
+			<Button
+				type="button"
+				variant="outline"
+				@click="Object.assign(filters, { statuses: [], tags: [], search: '' })"
+			>
+				Сбросить фильтры
+			</Button>
 		</div>
 	</form>
 </template>

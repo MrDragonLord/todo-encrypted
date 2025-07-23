@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { AppData } from '@/models'
 
 const STORAGE_KEY = 'todo_app_data'
@@ -25,14 +25,26 @@ export function useLocalStorage() {
 			}
 		}
 
-		watch(data, () => {
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(data.value))
-		}, { deep: true })
+		watch(
+			data,
+			() => {
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(data.value))
+			},
+			{ deep: true }
+		)
 
 		isInitialized = true
 	}
 
+	const filters = computed({
+		get: () => data.value.filters,
+		set: (newFilters) => {
+			data.value.filters = newFilters
+		}
+	})
+
 	return {
-		data
+		data,
+		filters
 	}
 }

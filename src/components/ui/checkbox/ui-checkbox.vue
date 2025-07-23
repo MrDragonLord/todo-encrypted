@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 defineOptions({ inheritAttrs: false })
 
 interface Props {
@@ -9,10 +11,30 @@ interface Props {
 	value?: string | number | boolean
 }
 
-const { id, name, disabled } = defineProps<Props>()
+const { id, name, disabled, value } = defineProps<Props>()
 
-const model = defineModel<boolean | string | number>({
+const modelValue  = defineModel<boolean | string | number| Array<string | number | boolean>>({
 	default: false
+})
+
+const isChecked = computed({
+	get() {
+		if (Array.isArray(modelValue.value) && value !== undefined) {
+			return modelValue.value.includes(value)
+		}
+		return !!modelValue.value
+	},
+	set(checked: boolean) {
+		if (Array.isArray(modelValue.value) && value !== undefined) {
+			if (checked && !modelValue.value.includes(value)) {
+				modelValue.value = [...modelValue.value, value]
+			} else if (!checked) {
+				modelValue.value = modelValue.value.filter(v => v !== value)
+			}
+		} else {
+			modelValue.value = checked
+		}
+	}
 })
 </script>
 
@@ -21,11 +43,11 @@ const model = defineModel<boolean | string | number>({
 		<label class="flex items-center relative cursor-pointer">
 			<input
 				type="checkbox"
-				v-model="model"
 				:id="id"
 				:name="name"
 				:disabled="disabled"
 				v-bind="$attrs"
+				v-model="isChecked"
 				class="peer cursor-pointer h-5 w-5 transition-all appearance-none rounded shadow hover:shadow-md border border-slate-300 checked:bg-blue-500 checked:ring-blue-500 focus:ring-4 focus:ring-blue-300 focus:outline-none"
 			/>
 			<span
