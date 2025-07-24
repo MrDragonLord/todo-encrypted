@@ -4,10 +4,17 @@ import { Button } from '@/components/ui/button'
 import { useLocalStorage } from '@/composables/useStorage'
 import { computed } from 'vue'
 import type { Task } from '@/models'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const { data } = useLocalStorage()
 
 const filters = computed(() => data.value.filters)
+
+const currentProject = computed(() => {
+	const id = route.params.projectId as string
+	return data.value.projects.find(p => p.id === id)
+})
 
 const statusesList = [
 	{ label: 'ToDo', value: 'todo' },
@@ -22,9 +29,7 @@ function collectTags(task: Task, tagSet: Set<string>) {
 
 const allTags = computed(() => {
 	const tags = new Set<string>()
-	data.value.projects.forEach(p => {
-		p.tasks.forEach(t => collectTags(t, tags))
-	})
+	currentProject.value?.tasks.forEach(t => collectTags(t, tags))
 	return Array.from(tags)
 })
 </script>

@@ -7,7 +7,9 @@ import TaskForm from '@/components/widgets/task-form.vue'
 import TaskItem from '@/components/widgets/task-item.vue'
 
 import { useProjectTasks } from '@/composables/useProjectTasks'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const {
 	project,
 	filteredTasks,

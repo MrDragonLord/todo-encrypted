@@ -26,33 +26,34 @@ const {
 			<Card
 				v-for="project in projects"
 				:key="project.id"
-				class="p-4 flex flex-col gap-2 justify-between"
+				class="relative group p-4 flex flex-col gap-2 justify-between transition-all duration-200 border border-gray-200 hover:border-blue-500 hover:shadow-md cursor-pointer"
 				@click="openProject(project.id)"
 			>
-				<!-- Название проекта -->
+
 				<template v-if="editingId === project.id">
 					<Input v-model="newName" :name="`title-${project.id}`" class="text-sm" />
 					<div class="flex gap-2">
 						<ButtonInline @click.stop="saveEdit(project.id)">Сохранить</ButtonInline>
-						<ButtonInline variant="danger" @click.stop="editingId = null"
-							>Отмена</ButtonInline
-						>
+						<ButtonInline variant="danger" @click.stop="editingId = null">
+							Отмена
+						</ButtonInline>
 					</div>
 				</template>
+
 				<template v-else>
-					<h2
-						class="text-lg font-semibold text-center cursor-pointer"
-						@click="router.push('/')"
-					>
+					<h2 class="text-lg font-semibold text-center text-gray-900">
 						{{ project.name }}
 					</h2>
+					<p class="text-xs text-gray-500 text-center group-hover:underline">
+						Кликните для открытия ->
+					</p>
 					<div class="flex justify-center gap-2">
-						<ButtonInline @click.stop="startEdit(project.id, project.name)"
-							>Редактировать</ButtonInline
-						>
-						<ButtonInline variant="danger" @click.stop="deleteProject(project.id)"
-							>Удалить</ButtonInline
-						>
+						<ButtonInline @click.stop="startEdit(project.id, project.name)">
+							Редактировать
+						</ButtonInline>
+						<ButtonInline variant="danger" @click.stop="deleteProject(project.id)">
+							Удалить
+						</ButtonInline>
 					</div>
 				</template>
 			</Card>

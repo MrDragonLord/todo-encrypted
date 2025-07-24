@@ -1,7 +1,7 @@
 import { reactive, ref } from 'vue'
 import type { Task } from '@/models'
 
-export function useTaskEditor(initialTask: Task, maxDepth = 1) {
+export function useTaskEditor(initialTask: Task) {
 	const isEditing = ref(false)
 	const newTag = ref('')
 	const newSubtaskTitle = ref('')
@@ -29,7 +29,7 @@ export function useTaskEditor(initialTask: Task, maxDepth = 1) {
 
 	const saveEdit = () => {
 		isEditing.value = false
-		return cloneTask(localTask)
+		return Object.assign(initialTask, cloneTask(localTask))
 	}
 
 	const addTag = () => {
@@ -61,7 +61,7 @@ export function useTaskEditor(initialTask: Task, maxDepth = 1) {
 
 	const updateSubtask = (updated: Task) => {
 		const idx = localTask.subtasks.findIndex(t => t.id === updated.id)
-		if (idx !== -1) localTask.subtasks[idx] = updated
+		if (idx !== -1) Object.assign(initialTask, cloneTask(localTask))
 	}
 
 	const deleteSubtask = (id: string) => {

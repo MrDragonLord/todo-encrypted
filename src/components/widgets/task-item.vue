@@ -77,7 +77,7 @@ const {
 			<Input
 				v-model="localTask.title"
 				placeholder="Заголовок задачи"
-				name="title"
+				:name="`title-${localTask.id}`"
 				class="w-full"
 				:readonly="!isEditing"
 			/>

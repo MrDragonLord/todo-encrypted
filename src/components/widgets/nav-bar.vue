@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -7,6 +8,9 @@ import { Logo } from '@/components/ui/logo'
 import ExportModal from '@/components/widgets/export-modal.vue'
 import ImportModal from '@/components/widgets/import-modal.vue'
 import { useLocalStorage } from '@/composables/useStorage.ts'
+
+const route = useRoute()
+const isOnProjectPage = computed(() => route.name === 'project.view')
 
 const { data } = useLocalStorage()
 const filters = data.value.filters
@@ -29,7 +33,7 @@ const showImportModal = ref(false)
 					name="search"
 					placeholder="Поиск"
 					v-model="filters.search"
-					class="bg-white text-black"
+					:disabled="!isOnProjectPage"
 				/>
 				<Button name="import" @click="showImportModal = true">Импорт</Button>
 				<Button name="export" variant="outline" @click="showExportModal = true">

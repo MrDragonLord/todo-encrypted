@@ -10,5 +10,3 @@ import NavBar from '@/components/widgets/nav-bar.vue'
 		</main>
 	</div>
 </template>
-
-<style scoped></style>
